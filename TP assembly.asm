@@ -24,15 +24,16 @@ loop:	ld pos, %r1 				! carga las entradas
 secb:								! aca comienza la secuencia de bomberos
 secp:								! aca comienza la secuencia de peatones
 
-BP:	0x00000001
+pos:0xd6000020						
+BP:	0x00000001						
 BB:	0x00000002
 pos:0x00000000
-LD1:0x00000000
-LD2:0x02020000
-LP1:0x04020000
-LP2:
-LP3:
-LP4:
-LP5:
-LP6:
-LB:	
+LD1:0x00000000						! todas las luces apagadas
+LD2:0x02020000						! A1 y A2 prendidas
+LP1:0x04020000						! etc....
+LP2:0x04010000
+LP3:LP1
+LP4:0x02040000
+LP5:0x01040000
+LP6:LP4
+LB:	0x06060000
