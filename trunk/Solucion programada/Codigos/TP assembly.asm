@@ -1,4 +1,4 @@
-! --------------------------------------
+! -----------------------------------------------
 ! 66.70 - Estructura del Computador
 ! Facultad de Ingenieria
 ! Universidad de Buenos Aires
@@ -7,7 +7,7 @@
 ! Alumnos:	Pántano, Laura Raquel
 !		Extramiana, Federico
 !		Rossi, Federico Martín
-! --------------------------------------
+! -----------------------------------------------
 ! RESOLUCION DEL TP EN ASSEMBLY ARC
 ! Sistema de semaforos
 !
@@ -23,11 +23,14 @@
 ! 	Bit26: Luz roja semáforo 2.
 ! 
 ! Utilizacion de registros:
+!
 !	%r1 - 
-!	%r5 - Contador de ciclos para los timer
+!	%r5 - Contador de ciclos para el timer T1
+!	%r6 - Contador de ciclos para el timer T2
+!	%r7 - Contador de ciclos para el timer T3
 ! 
 
-		.begin
+		.begin				
 		.org 	2048
 secA:		ld 	pos, %r1		! Carga las entradas
 		andcc 	%r1, BB, %r0 		! Verifica si esta encendido el boton de bomberos
@@ -42,39 +45,55 @@ secB:						! Secuencia de cruce de peatones
 secC:						! Secuencia de camion de bomberos
 
 
-resetT:	andcc %r5, %r0, %r5		! Establecemos en cero el registro contador de ciclos
-		jmpl	%r15+4, %r0		! Retorno a rutina invocante
-T1:		sethi	0x000000, %r0 	! Delay de 1 segundo
-		addcc	%r5, ciclo, %r5	! Incrementamos el contador de ciclos
-		[COMPLETAR]			! Verificamos si se llego a XX ciclos
-		[COMPLETAR]			! Si no se llego, volvemos a T1
-		jmpl	%r15+4, %r0		! Si se llego, retornamos a la secuencia invocante
-T5:		[COMPLETAR]			! Delay de 5 segundos	
-T30:		[COMPLETAR]			! Delay de 30 segundos
 
 
-pos		.equ	0xd6000020						
+! RUTINAS DE TIMERS
+! Timers existentes para uso
+!	T1  - Timer de 1 segundo
+!	T5  - Timer de 5 segundos
+!	T30 - Timer de 30 segundos
 
+T1:		ld	[T1_ciclos], %r5	! %r5 <-- T1_ciclos
+		ba	T_loop
+T5:		ld	[T5_ciclos], %r5	! %r5 <-- T5_ciclos
+		ba	T_loop
+T30:		ld	[T30_ciclos], %r5	! %r5 <-- T30_ciclos
+		ba	T_loop
+
+T_loop:	andcc	%r5, %r5, %r0		! Verificar cantidad restante de ciclos
+		be	done			! Finaliza cuando no quedan ciclos por ejecutar
+		sethi	0, %r0			! No operation (NOP)
+		addcc	%r5, -1, %r5		! Decrementamos cantidad restante de ciclos
+		ba	T_loop			! Repetir bucle
+T_done:  	jmpl	%r15+4, %r0		! Retorno a la rutina principal
+
+! FIN RUTINA TIMER
+
+
+pos		0xd6000020						
 
 ! Botones 
-BP		.equ	0x00000001						
-BB		.equ	0x00000002
-pos		.equ	0x00000000
+BP		0x00000001						
+BB		0x00000002
 
 ! Luces de la secuencia A
-LA1		.equ	0x00000000		! Todas las luces apagadas
-LA2		.equ	0x02020000		! A1 y A2 prendidas
+LA1		0x00000000			! Todas las luces apagadas
+LA2		0x02020000			! A1 y A2 prendidas
 
 ! Luces de la secuencia B
-LB1		.equ	0x04020001		! A1 y R2 encedidas
-LB2		.equ	0x04010001		! V1 y R2 encendidas
-LB3		.equ	0x04020001		! A1 y R2 encendidas
-LB4		.equ	0x02040001		! R1 y A2 encendidas
-LB5		.equ	0x01040001		! R1 y V2 encendidas
-LB6		.equ	0x02040001		! R1 y A2 encendidas
+LB1		0x04020001			! A1 y R2 encedidas
+LB2		0x04010001			! V1 y R2 encendidas
+LB3		0x04020001			! A1 y R2 encendidas
+LB4		0x02040001			! R1 y A2 encendidas
+LB5		0x01040001			! R1 y V2 encendidas
+LB6		0x02040001			! R1 y A2 encendidas
 
 ! Luces de la secuencia C
-LC1		.equ	0x06060000		! R1, A1, R2 y A2 encendidas
+LC1		0x06060000			! R1, A1, R2 y A2 encendidas
 
-! Auxiliares
-ciclo		.equ	1			! Constante que representa un ciclo de instruccion
+! Timers
+T1_ciclos:	1				! Cantidad de ciclos a ejecutar en T1
+T5_ciclos:	12				! Cantidad de ciclos a ejecutar en T5
+T30_ciclos:	100				! Cantidad de ciclos a ejecutar en T30
+
+		.end
