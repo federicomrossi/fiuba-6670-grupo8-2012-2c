@@ -4,23 +4,23 @@
 ! Universidad de Buenos Aires
 ! 
 ! Grupo:	8
-! Alumnos:	Pántano, Laura Raquel
+! Alumnos:	Pantano, Laura Raquel
 !		Extramiana, Federico
-!		Rossi, Federico Martín
+!		Rossi, Federico Martin
 ! -----------------------------------------------
 ! RESOLUCION DEL TP EN ASSEMBLY ARC
 ! Sistema de semaforos
 ! 
 ! Direccion de entrada 0xD6000020:
 ! 
-! 	Bit0: Botón de peatón.
-! 	Bit1: Botón para salida de bomberos.
-! 	Bit16: Luz verde semáforo 1.
-! 	Bit17: Luz amarilla semáforo 1.
-! 	Bit18: Luz roja semáforo 1.
-! 	Bit24: Luz verde semáforo 2.
-! 	Bit25: Luz amarilla semáforo 2.
-! 	Bit26: Luz roja semáforo 2.
+! 	Bit0: Boton de peaton.
+! 	Bit1: Boton para salida de bomberos.
+! 	Bit16: Luz verde semaforo 1.
+! 	Bit17: Luz amarilla semaforo 1.
+! 	Bit18: Luz roja semaforo 1.
+! 	Bit24: Luz verde semaforo 2.
+! 	Bit25: Luz amarilla semaforo 2.
+! 	Bit26: Luz roja semaforo 2.
 ! 
 ! Utilizacion de registros:
 ! 

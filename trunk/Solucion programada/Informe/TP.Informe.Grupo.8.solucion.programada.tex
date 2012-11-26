@@ -1,0 +1,253 @@
+\documentclass{article}
+
+%% PAQUETES
+
+% Paquetes generales
+\usepackage[margin=2cm, paperwidth=210mm, paperheight=297mm]{geometry}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{gensymb}
+
+% Paquetes para estilos
+\usepackage{textcomp}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{color}
+\usepackage{color}
+\usepackage{upquote}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage[T1]{fontenc}
+\usepackage[scaled]{beramono}
+
+% Paquetes extras
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{tocloft} % Table of contents
+
+%% Fin PAQUETES
+
+
+% Definición de preferencias para la impresión de código fuente.
+%% Colores
+\definecolor{gray99}{gray}{.99}
+\definecolor{gray95}{gray}{.95}
+\definecolor{gray75}{gray}{.75}
+\definecolor{gray50}{gray}{.50}
+\definecolor{keywords_blue}{rgb}{0.13,0.13,1}
+\definecolor{comments_green}{rgb}{0,0.5,0}
+\definecolor{strings_red}{rgb}{0.9,0,0}
+
+%% Caja de código
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFont{style_labelfont}{\color{black}\textbf}
+\DeclareCaptionFont{style_textfont}{\it\color{black}}
+\DeclareCaptionFormat{listing}{\colorbox{gray95}{\parbox{16.78cm}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=style_labelfont,textfont=style_textfont}
+
+
+\lstdefinelanguage
+	[ARC]{Assembler}     	% add a "ARC" dialect of Assembler
+  	{morekeywords={}}		% with these extra keywords:
+   	
+
+\lstset{
+	aboveskip = {1.5\baselineskip},
+	backgroundcolor = \color{gray99},
+	basicstyle = \ttfamily\footnotesize,
+	breakatwhitespace = true,   
+	breaklines = true,
+	captionpos = t,
+	columns = fixed,
+	commentstyle = \color{comments_green},
+	escapeinside = {\%*}{*)}, 
+	extendedchars = true,
+	frame = lines,
+	keywordstyle = \color{keywords_blue}\bfseries,
+	language = [x86masm]Assembler,                       
+	numbers = left,
+	numbersep = 5pt,
+	numberstyle = \tiny\ttfamily\color{gray50},
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	rulecolor = \color{gray75},
+	showspaces = false,
+	showstringspaces = false, 
+	showtabs = false,
+	stepnumber = 1,
+	stringstyle = \color{strings_red},                                    
+	tabsize = 2,
+	title = \null, % Default value: title=\lstname
+	upquote = true,                  
+}
+
+%% FIGURAS
+\captionsetup[figure]{labelfont=bf,textfont=it}
+%% TABLAS
+\captionsetup[table]{labelfont=bf,textfont=it}
+
+% COMANDOS
+
+%% Titulo de las cajas de código
+\renewcommand{\lstlistingname}{Código}
+%% Titulo de las figuras
+\renewcommand{\figurename}{Figura}
+%% Titulo de las tablas
+\renewcommand{\tablename}{Tabla}
+%% Referencia a los códigos
+\newcommand{\refcode}[1]{\textit{Código \ref{#1}}}
+%% Referencia a las imagenes
+\newcommand{\refimage}[1]{\textit{Imagen \ref{#1}}}
+%% Tabla de contenidos
+\renewcommand{\cfttoctitlefont}{\Huge\textbf\bigskip\bigskip\textbf}
+
+
+
+\begin{document}
+
+% ÍNDICE
+%%\tableofcontents
+%%\newpage
+
+
+% INTRODUCCIÓN
+\section{Introducción}
+\medskip
+
+	Se ha solicitado desarrollar el sistema para el funcionamiento nocturno del par de semáforos que se encuentran en la esquina de una estación de Bomberos. A continuación se describe cómo debe ser el funcionamiento de los mismos:
+\medskip
+
+
+\begin{itemize}
+
+	\item \noindent Ambos semáforos se encontrarán por defecto en un estado en el cual la luz amarilla se enciende de forma intermitente (1 seg. prendida – 1 seg. apagada);
+	
+	\item \noindent Cuando un peatón desea cruzar, debe pulsar el botón que se encuentra debajo del semáforo. En tal caso, los semáforos seguirán la siguiente secuencia:
+
+	\begin{itemize}
+
+		\item \noindent Por 5 segundos se mantendrá encendida la luz amarilla en el semáforo 1, y se encenderá la luz roja en el semáforo 2.
+
+		\item \noindent Luego, se encenderá la luz verde del semáforo 1 dejando la luz roja en el semáforo 2. Se permanecerá en este estado por una duración de 30 segundos.
+	
+		\item \noindent Transcurrido ese período, se encenderá la luz amarilla del semáforo 1 mientras que el semáforo 2 continua con la luz roja encendida.
+
+		\item \noindent Una vez transcurridos 5 segundos, se enciende la luz roja del semáforo 1 mientras que se pone en amarillo el semáforo 2. Se quedará en este estado por 5 segundos.
+
+		\item \noindent Ahora deberá permanecer el semáforo 1 en rojo mientras que el semáforo 2 prende únicamente la luz verde, quedando en este estado por otros 30 segundos.
+
+		\item \noindent Cumplido dicho tiempo, se procede a encender la luz amarilla exclusivamente en el semáforo 2, mientras que en el semáforo 1 se mantiene encendida la roja.
+
+		\item \noindent Luego de 5 segundos, se procede a volver al estado por defecto, en el cual ambos semáforos encienden de forma intermitente sus luces amarillas.
+
+	\end{itemize}
+
+	\item \noindent En caso de volverse a presionar el botón para el cruce de los peatones mientras se ejecuta la secuencia anterior, éste no tiene ningún efecto;
+
+	\item \noindent Existe también un botón que es utilizado al momento que deben salir los camiones de Bomberos. Cuando este es presionado, ambos semáforos deben pasar a encender su luz roja y su luz amarilla simultáneamente. Debido a que el tiempo requerido para la salida de los camiones no es conocido, se debe esperar a que este botón sea pulsado nuevamente para volver al estado por defecto de los semáforos (sin importar en qué estados se encontraban previamente);
+
+\end{itemize}
+\bigskip\bigskip
+
+
+
+
+% ESPECIFICACIONES
+\section{Especificaciones}
+\medskip
+
+	Se solicita diseñar un código \textit{Assembly ARC} que implemente la lógica de control descripta anteriormente.
+	\par
+	Los dos botones y las luces de los semáforos se encuentran mapeados a los bits de la dirección 0xD6000020 de la memoria, tal como se indica a continuación:
+	\medskip
+
+	\begin{itemize}
+	\itemsep=2pt \topsep=0pt \partopsep=0pt \parskip=0pt \parsep=0pt
+
+		\item \textbf{Bit 0}: Botón de peatón;
+		\item \textbf{Bit 1}: Botón para salida de bomberos;\\
+		\item \textbf{Bit 16}: Luz verde del semáforo 1;
+		\item \textbf{Bit 17}: Luz amarilla del semáforo 1;
+		\item \textbf{Bit 18}: Luz roja del semáforo 1;\\
+		\item \textbf{Bit 24}: Luz verde del semáforo 2;
+		\item \textbf{Bit 25}: Luz amarilla del semáforo 2;
+		\item \textbf{Bit 26}: Luz roja del semáforo 2;
+
+	\end{itemize}
+	\bigskip
+
+	Por último, se debe suponer que la frecuencia del reloj del procesador es de 1 GHz.
+
+
+
+
+% IMPLEMENTACIÓN
+\section{Implementación}
+\medskip
+
+	En el \refcode{code01} se muestra el código fuente en \textit{Assembly ARC} correspondiente a la solución solicitada. Este se ha desarrollado en el marco del diagrama de estados presentado en el primer informe, en el sentido de que se ha mantenido la lógica de la existencia de tres secuencias separadas entre sí, las cuales se ejecutan de acuerdo a los eventos caracterizados por los pulsadores \textit{BB} (botón de salida de camiones de bomberos) y \textit{BP} (cruce de peatones). Recuérdese que la \textit{secuencia A} representa el estado intermitente por defecto de los semáforos, la \textit{secuencia B} representa el conjunto de estados de los semáforos en el cruce de peatones y la \textit{secuencia C} representa la activación del botón para la salida de los camiones de bomberos.
+\bigskip
+
+
+% Código
+\lstset{language=[ARC]Assembler} % Cambiamos el lenguaje para que parsee en Assembler
+\lstinputlisting[label=code01,caption=``TP.Informe.Grupo.8.codigo.ARC.asm'' - Solución programada]{../Codigos/TP.Informe.Grupo.8.codigo.ARC.asm} 
+\bigskip\bigskip\bigskip
+
+
+	En los siguientes apartados se hará mención de algunos puntos importantes de la implementación, a fin de lograr su completo entendimiento por parte del lector.
+\bigskip\bigskip
+
+
+
+% IMPLEMENTACIÓN - Acceso a la dirección mapeada
+\subsection{Acceso a la dirección mapeada}
+\medskip
+	
+	Como se ha especificado, los botones y las luces de los semáforos se encuentran mapeados a los bits de la dirección de memoria 0xD6000020. Se puede notar que no es posible acceder a esta dirección en forma directa mediante las instrucciones \textit{ld} y \textit{st}. Esto se debe a que estas permiten como máximo un valor de 13 bits, que se extiende con signo a 32 bits para el segundo registro origen.
+	\par
+	Para poder lograr leer o almacenar en dicha dirección de memoria, se ha definido (línea 36) mediante la directiva \textit{.equ} al símbolo \textit{BASE\_IO}, el cual contiene un número de 22 bits. Este representa un punto elegido como comienzo de la región mapeada en memoria. Se ha escogido de manera tal de que al ser almacenado en un registro mediante la instrucción \textit{sethi}, estos 22 bits se encuentren en los bits más significativos del mismo. Esto se ha hecho en la línea 40, siendo \textit{\%r1} el registro destinado a reservar dicha dirección base. 
+	\par
+	Debajo de la definición de \textit{BASE\_IO} se declara el símbolo \textit{IO}  seteado con el valor que le falta a la posición \textit{BASE\_IO} para llegar a la dirección 0xD6000020. Por consiguiente, para poder acceder a la dirección donde se encuentran mapeados los estados de los botones y las luces de los semáforos bastará con establecer como dirección fuente o destino (dependiendo de la instrucción utilizada) a la suma del registro \textit{\%r1} y el valor del símbolo \textit{IO}, tal como se muestra por ejemplo en las líneas 45 y 90.
+	\bigskip\medskip
+
+
+
+% IMPLEMENTACIÓN - Modificación de las entradas y salidas
+\subsection{Modificación de las entradas y salidas}
+\medskip
+
+	De la misma forma en que se nos dificultaba acceder en forma directa a la dirección de memoria donde se encuentran mapeadas las entradas y salidas utilizadas, en este caso nos encontramos con que, al tratar de establecer un nuevo valor en dicha dirección mediante la instrucción \textit{st}, no se nos posibilita almacenar directamente en memoria un valor de 32 bits ya que excede los 13 bits permitidos por la instrucción. 
+	\par
+	Para resolver esta problemática, primeramente se definieron al final de la implementación, símbolos que representan los distintos estados de las luces en las secuencias de manera tal que posean un valor de 22 bits como máximo. Este valor se ha armado de manera tal que, al ser almacenado en un registro utilizando la instrucción \textit{sethi}, los valores se encuentren en los 22 bits más significativos de este último. Por ejemplo, el segundo estado de la \textit{secuencia A} debe poseer prendidas las luces A1 y A2, por lo que se necesita establecer en la dirección 0xD6000020 el valor 0x2020000 que en binario tiene un 1 en los bits 17 y 25, correspondientes a las luces amarillas. Entonces, el símbolo \textit{LA2} que interpreta al segundo estado de la secuencia tendrá el valor hexadecimal de los últimos 22 bits desde la derecha del valor 0x2020000, es decir, 0x8080.
+	\par
+	Por lo tanto, para almacenar este valor de 22 bits en la posición de memoria deseada, primeramente se deberán almacenar en los 22 bits más significativos de un registro para luego, mediante la instrucción \textit{st}, ser copiado en memoria.
+	\bigskip\medskip
+
+
+
+% IMPLEMENTACIÓN - Timers
+\subsection{Timers}
+\medskip
+	
+	Para el manejo de los distintos tiempos intermedios entre estados de las secuencias existentes, se han definido tres rutinas correspondientes a los timers a utilizar, a saber: 1 segundo (T1), 5 segundos (T5) y 30 segundos (T30).
+	\par
+	Se ha optado por implementar estos retardos realizando bucles de cierta cantidad de ciclos, los cuales fueron ajustados para obtener los delays esperados. Sin embargo, estos tiempos pueden variar ya que depende directamente de la frecuencia del procesador en donde se esta ejecutando el simulador del que se ha hecho uso para la puesta a prueba del presente desarrollo.
+	\bigskip\bigskip
+
+
+
+
+% COMPARACIÓN DE LAS SOLUCIONES
+\section{Comparación de las soluciones}
+\medskip
+
+	Tanto la solución cableada como la solución programada poseen ventajas y desventajas. Es decir, decidir entre una u otra nos lleva a soluciones de compromisos. Los factores más significativos que establecen una diferencia entre ambos son la \textit{velocidad}, la \textit{facilidad de actualización}, el \textit{costo} y la \textit{complejidad}. Dependiendo de las necesidades que se desean satisfacer, podemos optar por una u otra, siendo estas soluciones perfectamente válidas en distintos marcos de desarrollo.
+	\par
+	La solución programada es extensa y lenta pero es flexible y permite una implementación simple, en tanto que la solución cableada es rápida pero difícil de modificar, dando como resultado implementaciones más complejas. 
+	\par
+	Centrándonos en el sistema solicitado, es posible que la solución programada nos permita establecer un mayor ahorro de costos siendo que se utilizaría una cantidad notablemente menor de componentes electrónicos. A este hecho se le suma la reducción del espacio físico ocupado por el sistema de control. Por último, centrándonos en una hipotética situación de falla del sistema, la solución programada nos permite aminorar los espacios en los que se debe verificar dicha falla, mientras que la revisión del sistema cableado puede precisar una mayor constatación del funcionamiento de los dispositivos que lo conforman.
+
+
+\end{document}
