@@ -38,10 +38,8 @@ IO		.equ	0x20			! 0xD6000020 Posicion de memoria donde se encuentran
 						! mapeadas las luces y pulsadores
 		
 		sethi	BASE_IO, %r1		! %r1 <-- Direccion base de la region I/O de memoria
-		ba	secuenciaB
-secuenciaA:	!call	controlBB_a		! Realizamos control del pulsador BB
-		!call	controlBP_a		! Realizamos control del pulsador BP
-		and	%r1, %r0, %r2		! %r2 <-- 0x0 - Estado de luces LA1
+
+secuenciaA:	and	%r1, %r0, %r2		! %r2 <-- 0x0 - Estado de luces LA1
 		st	%r2, [%r1 + IO]	! 0xD6000020 <-- %r2 
 		call	T1			! Delay de 1 segundo
 		and	%r2, %r0, %r2		! %r2 <-- 0x0
@@ -80,26 +78,30 @@ secuenciaC:	and	%r2, %r0, %r2		! %r2 <-- 0x0
 		sethi	LC1, %r2		! %r2 <-- LA2 en 22 bits mas significativos
 		add	%r2, BB, %r2		! %r2 <-- %r2 + BB (mantenemos activo el bit de BB)
 		st	%r2, [%r1 + IO]	! 0xD6000020 <-- %r2 
-secuenciaC_:	!call	controlBB_d		! Verificacion de BB desactivado
-		ba	secuenciaC_		! Bucle para permanecer en la secuencia C		
+chequeoBB:	call	controlBB_d		! Verificacion de BB desactivado
+		ba	chequeoBB		! Bucle para permanecer en la secuencia C		
 
 
 
 
 ! Rutina de verificacion de pulsador BB activado
+
 controlBB_a:	ld 	[%r1 + IO], %r2	! %r2 <-- Valor de I/O mapeado en 0xD6000020
-		and 	%r2, BB, %r0 		! Verifica si esta encendido el boton de bomberos
+		andcc 	%r2, BB, %r0 		! Verifica si esta encendido el boton de bomberos
 		be 	secuenciaC		! Salto a la secuencia C
 		jmpl	%r15+4, %r0		! Retornamos a la rutina invocante
 
+
 ! Rutina de verificacion de pulsador BB desactivado
 controlBB_d:	ld 	[%r1 + IO], %r2	! %r2 <-- Valor de I/O mapeado en 0xD6000020
+		andcc 	%r2, BB, %r0 		! Verifica si esta encendido el boton de bomberos
 		be 	secuenciaA		! Salto a la secuencia A
 		jmpl	%r15+4, %r0		! Retornamos a la rutina invocante
 
+
 ! Rutina de verificacion de pulsador BP activado
 controlBP_a:	ld 	[%r1 + IO], %r2	! %r2 <-- Valor de I/O mapeado en 0xD6000020
-		and 	%r1, BP, %r0 		! Verifica si esta encendido el boton de peaton
+		andcc 	%r1, BP, %r0 		! Verifica si esta encendido el boton de peaton
 		be 	secuenciaB		! Salto a la secuencia B
 		jmpl	%r15+4, %r0		! Retornamos a la rutina invocante
 
@@ -113,17 +115,24 @@ controlBP_a:	ld 	[%r1 + IO], %r2	! %r2 <-- Valor de I/O mapeado en 0xD6000020
 !	T30 - Timer de 30 segundos
 
 T1:		ld	[T1_ciclos], %r5	! %r5 <-- T1_ciclos
-		ba	T_loop			! Iniciamos timer
-T5:		ld	[T5_ciclos], %r5	! %r5 <-- T5_ciclos
-		ba	T_loop			! Iniciamos timer
-T30:		ld	[T30_ciclos], %r5	! %r5 <-- T30_ciclos
-		ba	T_loop			! Iniciamos timer
-
-T_loop:	andcc	%r5, %r5, %r0		! Verificar cantidad restante de ciclos
+loop1:		addcc	%r5, -1, %r5		! Decrementamos cantidad restante de ciclos
 		be	T_done			! Finaliza cuando no quedan ciclos por ejecutar
-		sethi	0, %r0			! No operation (NOP)
-		add	%r5, -1, %r5		! Decrementamos cantidad restante de ciclos
-		ba	T_loop			! Repetir bucle
+		call	controlBB_a		! Realizamos control del pulsador BB
+		call	controlBP_a		! Realizamos control del pulsador BP
+		ba	loop1			! Repetir bucle
+	
+T5:		ld	[T5_ciclos], %r5	! %r5 <-- T5_ciclos
+loop2:		addcc	%r5, -1, %r5		! Decrementamos cantidad restante de ciclos
+		be	T_done			! Finaliza cuando no quedan ciclos por ejecutar
+		call	controlBB_a		! Realizamos control del pulsador BB
+		ba	loop2			! Repetir bucle
+
+T30:		ld	[T30_ciclos], %r5	! %r5 <-- T30_ciclos
+loop3:		addcc	%r5, -1, %r5		! Decrementamos cantidad restante de ciclos
+		be	T_done			! Finaliza cuando no quedan ciclos por ejecutar
+		call	controlBB_a		! Realizamos control del pulsador BB
+		ba	loop3			! Repetir bucle
+
 T_done:  	jmpl	%r15+4, %r0		! Retorno a la rutina invocante
 
 ! FIN RUTINA TIMER
