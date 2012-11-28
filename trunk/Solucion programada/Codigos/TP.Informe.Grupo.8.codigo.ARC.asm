@@ -28,9 +28,7 @@
 !	%r2 - Registro auxiliar para armado de estados a activar
 !	%r3 - Registro auxiliar para memorizacion de botones activos
 !	%r4 - Registro auxiliar para verificacion de botones activos
-!	%r5 - Contador de ciclos para el timer T1
-!	%r6 - Contador de ciclos para el timer T2
-!	%r7 - Contador de ciclos para el timer T3
+!	%r5 - Contador de ciclos para los timers
 ! 
 
 		.begin				

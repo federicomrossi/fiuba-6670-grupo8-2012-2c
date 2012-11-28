@@ -192,8 +192,11 @@
 
 % Código
 \lstset{language=[ARC]Assembler} % Cambiamos el lenguaje para que parsee en Assembler
-\lstinputlisting[label=code01,caption=``TP.Informe.Grupo.8.codigo.ARC.asm'' - Solución programada]{codigo.rb} 
+\lstinputlisting[label=code01,caption=``TP.Informe.Grupo.8.codigo.ARC.asm'' - Solución programada]{TP.Informe.Grupo.8.codigo.ARC.asm} 
 \bigskip\bigskip\bigskip
+
+
+
 
 
 	En los siguientes apartados se hará mención de algunos puntos importantes de la implementación, a fin de lograr su completo entendimiento por parte del lector.
@@ -207,9 +210,9 @@
 	
 	Como se ha especificado, los botones y las luces de los semáforos se encuentran mapeados a los bits de la dirección de memoria 0xD6000020. Se puede notar que no es posible acceder a esta dirección en forma directa mediante las instrucciones \textit{ld} y \textit{st}. Esto se debe a que estas permiten como máximo un valor de 13 bits, que se extiende con signo a 32 bits para el segundo registro origen.
 	\par
-	Para poder lograr leer o almacenar en dicha dirección de memoria, se ha definido (línea 36) mediante la directiva \textit{.equ} al símbolo \textit{BASE\_IO}, el cual contiene un número de 22 bits. Este representa un punto elegido como comienzo de la región mapeada en memoria. Se ha escogido de manera tal de que al ser almacenado en un registro mediante la instrucción \textit{sethi}, estos 22 bits se encuentren en los bits más significativos del mismo. Esto se ha hecho en la línea 40, siendo \textit{\%r1} el registro destinado a reservar dicha dirección base. 
+	Para poder lograr leer o almacenar en dicha dirección de memoria, se ha definido (línea 38) mediante la directiva \textit{.equ} al símbolo \textit{BASE\_IO}, el cual contiene un número de 22 bits. Este representa un punto elegido como comienzo de la región mapeada en memoria. Se ha escogido de manera tal de que al ser almacenado en un registro mediante la instrucción \textit{sethi}, estos 22 bits se encuentren en los bits más significativos del mismo. Esto se ha hecho en la línea 41, siendo \textit{\%r1} el registro destinado a reservar dicha dirección base. 
 	\par
-	Debajo de la definición de \textit{BASE\_IO} se declara el símbolo \textit{IO}  seteado con el valor que le falta a la posición \textit{BASE\_IO} para llegar a la dirección 0xD6000020. Por consiguiente, para poder acceder a la dirección donde se encuentran mapeados los estados de los botones y las luces de los semáforos bastará con establecer como dirección fuente o destino (dependiendo de la instrucción utilizada) a la suma del registro \textit{\%r1} y el valor del símbolo \textit{IO}, tal como se muestra por ejemplo en las líneas 45 y 90.
+	Debajo de la definición de \textit{BASE\_IO} se declara el símbolo \textit{IO}  seteado con el valor que le falta a la posición \textit{BASE\_IO} para llegar a la dirección 0xD6000020. Por consiguiente, para poder acceder a la dirección donde se encuentran mapeados los estados de los botones y las luces de los semáforos bastará con establecer como dirección fuente o destino (dependiendo de la instrucción utilizada) a la suma del registro \textit{\%r1} y el valor del símbolo \textit{IO}, tal como se muestra por ejemplo en las líneas 43 y 46.
 	\bigskip\medskip
 
 
