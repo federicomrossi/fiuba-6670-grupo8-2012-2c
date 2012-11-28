@@ -66,7 +66,7 @@
 	extendedchars = true,
 	frame = lines,
 	keywordstyle = \color{keywords_blue}\bfseries,
-	language = [x86masm]Assembler,                       
+	language = [ARC]Assembler,                       
 	numbers = left,
 	numbersep = 5pt,
 	numberstyle = \tiny\ttfamily\color{gray50},
@@ -192,7 +192,7 @@
 
 % Código
 \lstset{language=[ARC]Assembler} % Cambiamos el lenguaje para que parsee en Assembler
-\lstinputlisting[label=code01,caption=``TP.Informe.Grupo.8.codigo.ARC.asm'' - Solución programada]{../Codigos/TP.Informe.Grupo.8.codigo.ARC.asm} 
+\lstinputlisting[label=code01,caption=``TP.Informe.Grupo.8.codigo.ARC.asm'' - Solución programada]{codigo.rb} 
 \bigskip\bigskip\bigskip
 
 
@@ -234,6 +234,10 @@
 	Para el manejo de los distintos tiempos intermedios entre estados de las secuencias existentes, se han definido tres rutinas correspondientes a los timers a utilizar, a saber: 1 segundo (T1), 5 segundos (T5) y 30 segundos (T30).
 	\par
 	Se ha optado por implementar estos retardos realizando bucles de cierta cantidad de ciclos, los cuales fueron ajustados para obtener los delays esperados. Sin embargo, estos tiempos pueden variar ya que depende directamente de la frecuencia del procesador en donde se esta ejecutando el simulador del que se ha hecho uso para la puesta a prueba del presente desarrollo.
+	\par
+	Inicialmente se ha supuesto una frecuencia de 1GHz para el procesador. Además se supuso que cada instrucción necesita de 4 ciclos para ser completada. De esta manera, cada instrucción tardará 4nS en ser ejecutada. Como se puede apreciar en el \refcode{code01}, la rutina correspondiente al timer de 1 segundo (T1) contiene 13 instrucciones que forman parte del bucle, lo que resulta en 52nS en cada ciclo del bucle. Como se desea obtener un delay de 1 segundo, entonces el bucle se deberá repetir 19.230.769 veces. En cambio, las rutinas correspondientes a los timers de 5 segundos (T5) y 30 segundos (T30) estan conformadas por un bucle de 8 instrucciones cada una. Entonces, para el timer T5 se necesitará recorrer el bucle 156.250.000 veces a fin de obtener un delay de 5 segundos, mientras que para el timer T30 será necesario recorrer el bucle 937.500.000 veces de manera tal de producir un retardo de 30 segundos.
+	\par
+	Como se puede notar, la cantidad de repeticiones necesarias para obtener los distintos retardos son excesivamente mayores a los mostrados en el \refcode{code01} (símbolos \textit{T1\_ciclos}, \textit{T5\_ciclos} y \textit{T30\_ciclos}). Esto se debe, como ya se adelantó párrafos atrás, a que el simulador de ARC utilizado afecta considerablemente en el factor velocidad, además de que el software puede estar siendo ejecutado en una máquina con una frecuencia de procesador totalmente diferente a la supuesta. Por esta razón, en la implementación expuesta se ha establecido un número de ciclos que se ajustan aproximadamente a los delays esperados a la hora de correr el programa y ponerlo a prueba. 
 	\bigskip\bigskip
 
 
